@@ -1,5 +1,5 @@
 #ifndef CHIP8_H
-#define CHIP8_H // Back in C, in order to avoid repeated defines of struct, need to implement the ifndef and define. 
+#define CHIP8_H // I am now back in C, in order to avoid repeated defines of struct, need to implement the ifndef and define. 
 
 #include <stdint.h> // Need to include this in order to work with numbers in C
 #include <stdlib.h>
