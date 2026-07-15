@@ -63,11 +63,78 @@ void chip8_load (Chip8 *chip, const char *filename) { // This should open the RO
 }
 
 
-void chip8_cycle () {  // fetch/decode/execute code 
-         
+/*
+Fetch — read 2 bytes from RAM at PC, combine into one 16-bit opcode, increment PC by 2
+Decode — look at the first nibble to figure out what instruction it is
+Execute — carry out the instruction
+*/
+
+void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code 
+    uint16_t temp1 = chip->ram[chip->pc];
+    uint16_t temp2 = chip->ram[chip->pc + 1];
+
+    // C is a little endian. However, due to nautre of chip8, first byte read from memory is most sig byte. Store temp1 byte at uper 
+
+    temp1 = temp1 << 8; 
+
+    uint16_t instr = temp1 | temp2; 
+
+    chip->pc += 2; // Incrememnt the PC by 2, not 4 because we are only working with 16 bits not 32 bits
+
+    uint16_t opcode = instr & 0xFF00;
+    
+    switch (opcode)  {
+        case 0x0:
+            break;
+        case 0x1:
+
+            break;
+        case 0x2:
+
+            break;
+        case 0x3:
+
+            break;
+        case 0x4:
+
+            break;
+        case 0x5:
+
+            break;
+        case 0x6:
+
+            break;
+        case 0x7:
+
+            break;
+        case 0x8:
+
+            break;
+        case 0x9:
+
+            break;
+        case 0xA:
+
+            break;
+        case 0xB:
+
+            break;
+        case 0xC: 
+
+            break;
+        case 0xD:
+
+            break;
+        case 0xE:
+
+            break;
+        case 0xF:
+
+            break;
+    }   
 }
 
-int main (){
+int main () {
 
    
 }
