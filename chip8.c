@@ -33,17 +33,38 @@ void chip8_init (Chip8 *chip) {
         0xF0, 0x80, 0xF0, 0x80, 0x80, // F
     };
 
-    memcpy(chip->ram + 0x050, sprites, sizeof(sprites));
+    memcpy(chip->ram + 0x050, sprites, sizeof(sprites)); // i wanna be like the cool kids, so storing font at 0x050
 }
 
 void chip8_load (Chip8 *chip, const char *filename) { // This should open the ROM file and load it into Ram starting at 0x200
 
-// Have to rememeber, the bytes for the chars are stored from 0x050 to 0x09f or wtv. 
     FILE *pf = fopen(filename, "rb"); // should use rb in this case as im reading binary files. 
+    if (pf == NULL) {
+        printf("NO file\n"); // if it doesnt exist, exit with code 1. 
+        exit(1);
+    }
+
+    fseek(pf, 0, SEEK_END); // Need to determine 
+
+    long file_size = ftell(pf);
+    rewind(pf);
+    if (file_size > 3584) {
+        printf("File is too big");
+        exit(1);
+    }
+
+    // otherwise it should read ROM into RAM
+
+    fread(chip->ram+0x200, sizeof(uint8_t), file_size, pf);
+
+    // now done with file pointer, so close it. 
+
+    fclose(pf);
 }
 
-void chip8_cycle () {
-         // I want to use the fetch/decode/execute code here
+
+void chip8_cycle () {  // fetch/decode/execute code 
+         
 }
 
 int main (){
