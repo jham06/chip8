@@ -158,16 +158,36 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
         case 0xD: // DXYN This is drawing the display. Need X, Y coords and needs to set other things as well. 
             uint16_t vx = (instr & 0x0F00) >> 8;
             uint16_t vy = (instr & 0x00F0) >> 4;
+            uint16_t N = (instr & 0x000F); // Get N
+
 
             int xcord = (chip->registers[vx]) % 64;
             int ycord = (chip->registers[vy]) % 32;
  
             chip->registers[15] = 0; // set VF to zero
-
-            // Now work for N rows. 
-
             
+            for (int i = 0; i < N; i++) { // access each row in the N rows
+                // SO in this case, in order to access each of the 8 bits in the sprite row, i need to use bitwise operations. 
+                // Should prolly have a inner forloop son im crine
+                
+                uint16_t n_temp = chip->ram[chip->idx+i]; 
+                
+    
+                
+                // IN order to access the coordinates X and Y in the display, since it is a 1d, I need to add some 
+            }
+            /* Now work for N rows.  Need to implement:
+                - Get the Nth byte of sprite data, counting from the memory address in the I register (I is not incremented)
+                - For each of the 8 pixels/bits in this sprite row (from left to right, ie. from most to least significant bit):
+                    - If the current pixel in the sprite row is on and the pixel at coordinates X,Y on the screen is also on, turn off the pixel and set VF to 1
+                    - Or if the current pixel in the sprite row is on and the screen pixel is not, draw the pixel at the X and Y coordinates
+                    - If you reach the right edge of the screen, stop drawing this row
+                    - Increment X (VX is not incremented)
+                - Increment Y (VY is not incremented)
+                - Stop if you reach the bottom edge of the screen
+            */
 
+            // I also cannot increment I
             
             break;
         case 0xE:
