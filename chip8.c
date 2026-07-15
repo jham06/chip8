@@ -5,19 +5,48 @@
 
 
 
-void chip8_initial () { // zero out everything (RAM, registers, display, stack, stack, keypad timers.) 
-// Also set PC to 0x200 and load font data into RAM at 0x050. Just assign to hexadecimal
+void chip8_init (Chip8 *chip) {  
+    // zero out the struct, as memset helps us do so 
+    memset(chip, 0, sizeof(*chip)); 
+
+    // set PC to 0x200, the starting point of the program
+    chip->pc = 0x200;
     
+    // Just hardcoding these font data. Copied from another open source code lul
+    // load font data into RAM at 0x050. Just assign to hexadecimal
+    const uint8_t sprites []= { 
+        0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+        0x20, 0x60, 0x20, 0x20, 0x70, // 1
+        0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+        0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+        0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+        0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+        0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+        0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+        0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+        0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+        0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+        0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+        0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+        0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+        0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+        0xF0, 0x80, 0xF0, 0x80, 0x80, // F
+    };
+
+    memcpy(chip->ram + 0x050, sprites, sizeof(sprites));
 }
 
-void chip8_load () { // This should open the ROM file and load it into Ram starting at 0x200
+void chip8_load (Chip8 *chip, const char *filename) { // This should open the ROM file and load it into Ram starting at 0x200
 
 // Have to rememeber, the bytes for the chars are stored from 0x050 to 0x09f or wtv. 
-
+    FILE *pf = fopen(filename, "rb"); // should use rb in this case as im reading binary files. 
 }
 
+void chip8_cycle () {
+         // I want to use the fetch/decode/execute code here
+}
 
 int main (){
 
-    // I want to use the fetch/decode/execute code here, instead of having a separate function. 
+   
 }
