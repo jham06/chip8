@@ -81,13 +81,35 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
 
     chip->pc += 2; // Incrememnt the PC by 2, not 4 because we are only working with 16 bits not 32 bits
 
-    uint16_t opcode = instr & 0xFF00;
+    uint16_t opcode = instr & 0xF000; // Extract that specific 4 upper bits, the most significant nibble
     
-    switch (opcode)  {
-        case 0x0:
-            break;
-        case 0x1:
+    switch (opcode)  { 
+        case 0x0: // Two cases, 00E0 and 00EE, still have access to instr
+            uint16_t temp = instr & 0x00FF;
+            switch (temp)  {
+                case 0xE0: // Clear the display, 
+                    memset(chip->display, 0, sizeof(chip->display));
+                    break;
+                case 0xEE: // pop last address from the stack and set PC to it
+                    
+                     // cant just pop in C, so I need to shift it
+                    int stack_size = sizeof(chip->stack) / sizeof(chip->stack[0]);
 
+                    uint16_t popped_temp = chip->stack[stack_size];
+                
+                    for (int i = 0; i < stack_size; i++) {
+                        chip->stack[i] = chip->stack[i + 1];
+                    } // shift elements to the left
+
+                    chip->pc = popped_temp;
+                    
+                    break;
+            }   
+            break;
+        case 0x1: // only consider 1NNN, simply set PC to NNN
+            uint16_t location = instr & 0x0FFF; // Need to acquire NNN
+
+            chip->pc = location;
             break;
         case 0x2:
 
@@ -101,11 +123,20 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
         case 0x5:
 
             break;
-        case 0x6:
+        case 0x6: // simply set register VX to value NN
+            uint16_t set_temp = instr & 0x00FF;
 
+            uint16_t set_reg = (instr & 0x0F00) >> 8; // Need to acquie the decimal value
+            
+            chip->registers[set_reg] = set_temp; // set the register to the value NN
             break;
-        case 0x7:
+        case 0x7: // simply add value NN to VX
+            uint16_t add_temp = instr & 0x00FF;
 
+            uint16_t add_reg = (instr & 0x0F00) >> 8; // Need to acquie the decimal value
+            
+            chip->registers[add_reg] += add_temp; // okay mb, i thought VF would be affected
+            
             break;
         case 0x8:
 
@@ -113,8 +144,10 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
         case 0x9:
 
             break;
-        case 0xA:
+        case 0xA: // set the index register to value NNN
+            uint16_t index_temp = instr & 0x0FFF;
 
+            chip->idx = index_temp;
             break;
         case 0xB:
 
@@ -122,8 +155,20 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
         case 0xC: 
 
             break;
-        case 0xD:
+        case 0xD: // DXYN This is drawing the display. Need X, Y coords and needs to set other things as well. 
+            uint16_t vx = (instr & 0x0F00) >> 8;
+            uint16_t vy = (instr & 0x00F0) >> 4;
 
+            int xcord = (chip->registers[vx]) % 64;
+            int ycord = (chip->registers[vy]) % 32;
+ 
+            chip->registers[15] = 0; // set VF to zero
+
+            // Now work for N rows. 
+
+            
+
+            
             break;
         case 0xE:
 
