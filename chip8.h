@@ -12,7 +12,7 @@ typedef struct {
 
     uint16_t p_counter;
     uint16_t index_reg; // specfically, these are 16 bits where 12 are used to access the 4096 bytes in ram
-    uint16_t stack[16]; // because the chip8
+    uint16_t stack[16]; // because the chip8 had limited space, i can only have 16 levels
     uint16_t *sp = stack;
 
 
