@@ -12,7 +12,7 @@ typedef struct {
 
     uint16_t pc; 
     uint16_t idx; // specfically, these are 16 bits where 12 are used to access the 4096 bytes. Both pc and index
-    uint16_t stack[16]; // because the chip8 had limited space, can only have 16 levels
+    uint16_t stack[16]; // because the chip8 had limited space, can only have 16 levels. In the future I'll make it bigger??
     uint16_t sp; // apprently i cant declare ptr in struct :(
 
 
