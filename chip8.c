@@ -211,19 +211,20 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
 
 
                     // Need to check for overflow 
-                    if () {
-
-                    } else {
-
+                    if (chip->registers[x_num] > (UINT8_MAX - chip->registers[y_num])) { // overflow
+                        chip->registers[15] = 1;
+                    } else { // fine
+                        chip->registers[15] = 0;
                     }
-
-                    chip->registers[x_num] = chip->registers[y_num] + chip->registers[x_num];
+                    chip->registers[x_num] = chip->registers[x_num] + chip->registers[y_num];
             
                     break;
                 
                 case 0x05:
-            
-                    break
+                        
+
+
+                    break;
 
                 case 0x06:
             
@@ -232,8 +233,6 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                 case 0x07:
             
                     break;
-
-
 
                 
             }
