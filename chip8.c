@@ -116,13 +116,39 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
 
             chip->pc = location;
             break;
-        case 0x2:
+        case 0x2: // 2NNN, Set PC = NNN. Push current PC to stack. 
+
+            uint8_t addr = instr & 0x0FFF;
+
+            // First push current PC to stack. 
+
+            
+
+            chip->pc = addr;
 
             break;
-        case 0x3:
+        case 0x3: // 3XNN, increment PC by 2 if value in VX == NN;
+            int reg_num = (instr >> 8) & 0x000F;
+            uint8_t reg_value = chip->registers[reg_num];
+
+            uint8_t value = instr && 0x00FF;
+            if (reg_value == value) {
+                chip->pc += 2;
+            }
+
+            // otherwise do nun
 
             break;
         case 0x4:
+            int reg_num = (instr >> 8) & 0x000F;
+            uint8_t reg_value = chip->registers[reg_num];
+
+            uint8_t value = instr && 0x00FF;
+            if (reg_value != value) {
+                chip->pc += 2;
+            }
+
+            // otherwise do nun
 
             break;
         case 0x5:
@@ -225,7 +251,8 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                 }
                 
             }
-            
+
+            // ASSUME FOR NOW, lets debug later. 
             break;
         case 0xE:
 
