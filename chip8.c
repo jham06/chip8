@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "chip8.h" 
 #include <stdlib.h>
-
+#include <string.h>
 // implement helper functions 
 
 
@@ -163,14 +163,11 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
         case 0xD: // DXYN This is drawing the display. Need X, Y coords and needs to set other things as well. 
 
 
-            /* Now work for N rows.  Need to implement:
-                - For each of the 8 pixels/bits in this sprite row (from left to right, ie. from most to least significant bit):
-                    - If the current pixel in the sprite row is on and the pixel at coordinates X,Y on the screen is also on, turn off the pixel and set VF to 1
-                    - Or if the current pixel in the sprite row is on and the screen pixel is not, draw the pixel at the X and Y coordinates
-                    - If you reach the right edge of the screen, stop drawing this row
-            */
+            
+            // If you reach the right edge of the screen, stop drawing this row
 
-
+            // Stop if you reach the bottom edge of the screen
+            
             uint16_t vx = (instr & 0x0F00) >> 8;
             uint16_t vy = (instr & 0x00F0) >> 4;
             uint16_t N = (instr & 0x000F); // Get N
@@ -182,9 +179,9 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
             chip->registers[15] = 0; // set VF to zero
             
             int ytemp = ycord;
-            for (int i = 0; i < N; i++) { // access each row in the N rows
-                // SO in this case, in order to access each of the 8 bits in the sprite row, i need to use bitwise operations. 
-                // Should prolly have a inner forloop son im crine
+            for (int i = 0; i < N; i++) { // access each of N rows
+                // To access each of the 8 bits in the sprite row, use bitwise operations. 
+                // have a inner forloop son im crine
                 
                 uint8_t n_temp = chip->ram[chip->idx+i]; 
                 
@@ -197,18 +194,35 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
 
                         uint8_t msb = 0x80;
                         if (n_temp & msb) {
-                            chip->display[ytemp * 64 + xtemp] = 1; // set the value to one. Use the 1d formula to access 2d
+                            uint8_t value = chip->display[ytemp * 64 + xtemp];
+                            // Apply two cases, if the value at the display is on or off
+                            if (value) {
+                                // use the 1d formula to access 2d
+                                chip->registers[15] = 1;
+                                chip->display[ytemp * 64 + xtemp] = 0; // turn off
+                                n_temp = n_temp << 1;
+                            } else {
+                                chip->display[ytemp * 64 + xtemp] = 1; // turn on 
+                                n_temp = n_temp << 1;
+                            }
                         } else {
+                            n_temp = n_temp << 1;
                             xtemp++; // Increment X (VX is not incremented)
+                            if (xtemp >= 64) {
+                                break; // Stop drawing on row. 
+                            }
                             continue;
                         }
                     } else {
-                        break; // get out of the loop
+                        break; // if it is zero after shiftingget out of the loop
                     }
                 }
                 
         
                 ytemp++; //Increment Y (VY is not incremented)
+                if (ytemp >= 32) {
+                    break; // stop drawing.
+                }
                 
             }
             
