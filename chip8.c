@@ -2,6 +2,7 @@
 #include "chip8.h" 
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 // implement helper functions 
 
 
@@ -127,37 +128,38 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
             chip->pc = addr;
 
             break;
-        case 0x3: // 3XNN, increment PC by 2 if value in VX == NN;
-            int reg_num = (instr >> 8) & 0x000F;
-            uint8_t reg_value = chip->registers[reg_num];
-
-            uint8_t value = instr && 0x00FF;
-            if (reg_value == value) {
+        case 0x3: // 3XNN, increment PC by 2 if value in VX == NN
+            uint8_t reg_num = (instr >> 8) & 0x000F;
+            uint8_t value = instr & 0x00FF;
+            if (chip->registers[reg_num] == value) {
                 chip->pc += 2;
             }
 
             // otherwise do nun
 
             break;
-        case 0x4:
-            int reg_num = (instr >> 8) & 0x000F;
-            uint8_t reg_value = chip->registers[reg_num];
-
-            uint8_t value = instr && 0x00FF;
-            if (reg_value != value) {
+        case 0x4: //  4XNN, increment by 2 if value in VX != NN
+            uint8_t reg_num = (instr >> 8) & 0x000F;
+            uint8_t value = instr & 0x00FF;
+            if (chip->registers[reg_num] != value) {
                 chip->pc += 2;
             }
 
             // otherwise do nun
 
             break;
-        case 0x5:
+        case 0x5: // 5XY0, skip if values VX == VY 
+            uint8_t x_num = (instr >> 8) & 0x000F;
+            uint8_t y_num = (instr >> 4) & 0x000F;
+            if (chip->registers[x_num] == chip->registers[y_num]) {
+                chip->pc += 2;
+            }
 
+            // otherwise do nun
             break;
-        case 0x6: // simply set register VX to value NN, 6XNN
-            uint16_t set_temp = instr & 0x00FF;
-
-            uint16_t set_reg = (instr & 0x0F00) >> 8; // Need to acquie the decimal value
+        case 0x6: // 6XNN, simply set register VX to value NN
+            uint8_t set_temp = instr & 0x00FF;
+            uint8_t set_reg = (instr & 0x0F00) >> 8; // Need to acquie the decimal value
             
             chip->registers[set_reg] = set_temp; // set the register to the value NN
             break;
@@ -169,10 +171,93 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
             chip->registers[add_reg] += add_temp; // okay mb, i thought VF would be affected
             
             break;
-        case 0x8:
+        case 0x8: // 8XY0, VX is set to the value of VY
+            uint8_t temp = instr & 0x000F;
+            switch (temp) {
+                case 0x00: // VX is set to the value of VY.
+                    uint8_t x_num = (instr >> 8) & 0x000F;
+                    uint8_t y_num = (instr >> 4) & 0x000F;
+
+                    chip->registers[x_num] = chip->registers[y_num];
+
+                    break;
+
+                case 0x01: // VX = VX OR VY
+                    uint8_t x_num = (instr >> 8) & 0x000F;
+                    uint8_t y_num = (instr >> 4) & 0x000F;
+
+                    chip->registers[x_num] = chip->registers[y_num] | chip->registers[x_num];
+                    break;
+
+                case 0x02: // VX = VX AND VY
+                    uint8_t x_num = (instr >> 8) & 0x000F;
+                    uint8_t y_num = (instr >> 4) & 0x000F;
+
+                    chip->registers[x_num] = chip->registers[y_num] & chip->registers[x_num];
+            
+                    break;
+
+                case 0x03: // VX = VX XOR VY
+                    uint8_t x_num = (instr >> 8) & 0x000F;
+                    uint8_t y_num = (instr >> 4) & 0x000F;
+
+                    chip->registers[x_num] = chip->registers[y_num] ^ chip->registers[x_num];
+            
+                    break;
+
+                case 0x04:
+                    uint8_t x_num = (instr >> 8) & 0x000F;
+                    uint8_t y_num = (instr >> 4) & 0x000F;
+
+
+                    // Need to check for overflow 
+                    if () {
+
+                    } else {
+
+                    }
+
+                    chip->registers[x_num] = chip->registers[y_num] + chip->registers[x_num];
+            
+                    break;
+                
+                case 0x05:
+            
+                    break
+
+                case 0x06:
+            
+                    break;
+                
+                case 0x07:
+            
+                    break;
+
+
+
+                
+            }
+
+            uint8_t x_num = (instr >> 8) & 0x000F;
+            uint8_t y_num = (instr >> 4) & 0x000F;
+
+            chip->registers[x_num] = chip->registers[y_num];
+
+            
 
             break;
-        case 0x9:
+        case 0x9: // 9XY0, skip if values VX != VY
+            uint8_t x_num = (instr >> 8) & 0x000F;
+            uint8_t y_num = (instr >> 4) & 0x000F;
+
+            uint8_t x_value = chip->registers[x_num];
+            uint8_t y_value = chip->registers[y_num];
+
+            if (x_value != y_value) {
+                chip->pc += 2;
+            }
+
+            // otherwise do nun
 
             break;
         case 0xA: // set the index register to value NNN
