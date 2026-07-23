@@ -1,10 +1,10 @@
+// Get necessary headers and libraries needed. 
+
 #include <stdio.h>
 #include "chip8.h" 
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-// implement helper functions 
-
 
 
 void chip8_init (Chip8 *chip) {  
