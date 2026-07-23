@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "chip8.h" // forgor to include this lol
+#include <stdlib.h>
 
 // Need to include the necessary helper functions. 
 
@@ -82,9 +83,13 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
     chip->pc += 2; // Incrememnt the PC by 2, not 4 because we are only working with 16 bits not 32 bits
 
     uint16_t opcode = instr & 0xF000; // Extract that specific 4 upper bits, the most significant nibble
+
+    opcode = opcode >> 12; // Forgot to shift 12 to get what to do, 0000 0000 0000 0000 
+
+    /*NOTE! I STILL HAVE ACCESS TO THE ORIGINAL INSTRUCTION*/
     
     switch (opcode)  { 
-        case 0x0: // Two cases, 00E0 and 00EE, still have access to instr
+        case 0x0: // Two cases, 00E0 and 00EE
             uint16_t temp = instr & 0x00FF;
             switch (temp)  {
                 case 0xE0: // Clear the display, 
@@ -123,7 +128,7 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
         case 0x5:
 
             break;
-        case 0x6: // simply set register VX to value NN
+        case 0x6: // simply set register VX to value NN, 6XNN
             uint16_t set_temp = instr & 0x00FF;
 
             uint16_t set_reg = (instr & 0x0F00) >> 8; // Need to acquie the decimal value
@@ -156,26 +161,8 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
 
             break;
         case 0xD: // DXYN This is drawing the display. Need X, Y coords and needs to set other things as well. 
-            uint16_t vx = (instr & 0x0F00) >> 8;
-            uint16_t vy = (instr & 0x00F0) >> 4;
-            uint16_t N = (instr & 0x000F); // Get N
 
 
-            int xcord = (chip->registers[vx]) % 64;
-            int ycord = (chip->registers[vy]) % 32;
- 
-            chip->registers[15] = 0; // set VF to zero
-            
-            for (int i = 0; i < N; i++) { // access each row in the N rows
-                // SO in this case, in order to access each of the 8 bits in the sprite row, i need to use bitwise operations. 
-                // Should prolly have a inner forloop son im crine
-                
-                uint16_t n_temp = chip->ram[chip->idx+i]; 
-                
-    
-                
-                // IN order to access the coordinates X and Y in the display, since it is a 1d, I need to add some 
-            }
             /* Now work for N rows.  Need to implement:
                 - Get the Nth byte of sprite data, counting from the memory address in the I register (I is not incremented)
                 - For each of the 8 pixels/bits in this sprite row (from left to right, ie. from most to least significant bit):
@@ -187,7 +174,42 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                 - Stop if you reach the bottom edge of the screen
             */
 
-            // I also cannot increment I
+
+            uint16_t vx = (instr & 0x0F00) >> 8;
+            uint16_t vy = (instr & 0x00F0) >> 4;
+            uint16_t N = (instr & 0x000F); // Get N
+
+
+            int xcord = (chip->registers[vx]) % 64; //
+            int ycord = (chip->registers[vy]) % 32;
+ 
+            chip->registers[15] = 0; // set VF to zero
+            
+            
+            for (int i = 0; i < N; i++) { // access each row in the N rows
+                // SO in this case, in order to access each of the 8 bits in the sprite row, i need to use bitwise operations. 
+                // Should prolly have a inner forloop son im crine
+                
+                uint16_t n_temp = chip->ram[chip->idx+i]; 
+                
+                int xtemp = xcord;
+                int ytemp = ycord;
+
+                while (n_temp > 0) { // count from most to least significant bit 0000 0000, to be convinient shift left bc it is unsigned
+                    // Shift the msb to the right
+                    if (n_temp)  {
+                        
+                    } else {
+                        xtemp++;
+                        continue;
+                    }
+                }
+                
+        
+                ytemp++;
+                
+                // IN order to access the coordinates X and Y in the display, since it is a 1d, I need to add some 
+            }
             
             break;
         case 0xE:
