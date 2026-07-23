@@ -1,16 +1,16 @@
 #include <stdio.h>
-#include "chip8.h" // forgor to include this lol
+#include "chip8.h" 
 #include <stdlib.h>
 
-// Need to include the necessary helper functions. 
+// implement helper functions 
 
 
 
 void chip8_init (Chip8 *chip) {  
-    // zero out the struct, as memset helps us do so 
+    // zero out the struct using memset  
     memset(chip, 0, sizeof(*chip)); 
 
-    // set PC to 0x200, the starting point of the program
+    // set PC to 0x200, i.e. starting point of program
     chip->pc = 0x200;
     
     // Just hardcoding these font data. Copied from another open source code lul
@@ -34,10 +34,10 @@ void chip8_init (Chip8 *chip) {
         0xF0, 0x80, 0xF0, 0x80, 0x80, // F
     };
 
-    memcpy(chip->ram + 0x050, sprites, sizeof(sprites)); // i wanna be like the cool kids, so storing font at 0x050
+    memcpy(chip->ram + 0x050, sprites, sizeof(sprites)); // wanna be like cool kids, store at 0x050
 }
 
-void chip8_load (Chip8 *chip, const char *filename) { // This should open the ROM file and load it into Ram starting at 0x200
+void chip8_load (Chip8 *chip, const char *filename) { // Open the ROM file and load it into Ram starting at 0x200
 
     FILE *pf = fopen(filename, "rb"); // should use rb in this case as im reading binary files. 
     if (pf == NULL) {
@@ -164,14 +164,10 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
 
 
             /* Now work for N rows.  Need to implement:
-                - Get the Nth byte of sprite data, counting from the memory address in the I register (I is not incremented)
                 - For each of the 8 pixels/bits in this sprite row (from left to right, ie. from most to least significant bit):
                     - If the current pixel in the sprite row is on and the pixel at coordinates X,Y on the screen is also on, turn off the pixel and set VF to 1
                     - Or if the current pixel in the sprite row is on and the screen pixel is not, draw the pixel at the X and Y coordinates
                     - If you reach the right edge of the screen, stop drawing this row
-                    - Increment X (VX is not incremented)
-                - Increment Y (VY is not incremented)
-                - Stop if you reach the bottom edge of the screen
             */
 
 
@@ -201,9 +197,9 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
 
                         uint8_t msb = 0x80;
                         if (n_temp & msb) {
-                            chip->display[ytemp * 64 + xtemp] = 1; // set the value to one
+                            chip->display[ytemp * 64 + xtemp] = 1; // set the value to one. Use the 1d formula to access 2d
                         } else {
-                            xtemp++;
+                            xtemp++; // Increment X (VX is not incremented)
                             continue;
                         }
                     } else {
@@ -212,9 +208,8 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                 }
                 
         
-                ytemp++;
+                ytemp++; //Increment Y (VY is not incremented)
                 
-                // IN order to access the coordinates X and Y in the display, since it is a 1d, I need to add some 
             }
             
             break;
