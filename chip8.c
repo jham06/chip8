@@ -421,6 +421,10 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                     
                     break;
 
+                case 0x1E:
+                    
+                    break;
+
                 case 0x29:
                     
                     break;
