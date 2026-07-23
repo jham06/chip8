@@ -6,8 +6,35 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-// necessary libraries.
+const int scale = 10;
+const int WIDTH = 64;
+const int HEIGHT = 32;
 
-int main() {
+// necessary libraries and header files. 
+
+int display_init (Chip8 *chip) {
+
+};
+
+void display_render (Chip8 *chip) {
+
+}; 
+
+int display_handle_input (Chip8 *chip) {
+
+};  
+
+void display_clean (Chip8 *chip) {
+
+};
+
+
+/*
+    Code adapted from: Lazy Foo' Productions, Hello SDL: Your First Graphics Window
+    Author: Lazy foo
+    URL: https://lazyfoo.net/tutorials/SDL/01_hello_SDL/index2.php
+*/
+
+int main(int argc, char* args[]) {
 
 }
