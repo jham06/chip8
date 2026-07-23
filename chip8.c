@@ -1,10 +1,11 @@
 // Get necessary headers and libraries needed. 
-
 #include <stdio.h>
 #include "chip8.h" 
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <time.h>
 
 
 void chip8_init (Chip8 *chip) {  
@@ -289,21 +290,32 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
             // otherwise do nun
 
             break;
-        case 0xA: // set the index register to value NNN
+        case 0xA: // ANNN, set the index register to value NNN
             uint16_t index_temp = instr & 0x0FFF;
 
             chip->idx = index_temp;
             break;
-        case 0xB:
+
+        case 0xB: // BNNN, update PC = V0 + NNN
+
+            uint16_t jump = 0x0FFF & instr;
+            
+            chip->pc = jump + chip->registers[0]; // Hopefully it does int promo?
 
             break;
-        case 0xC: 
 
+        case 0xC: // CXNN, VX = rand() & NN
+
+            uint8_t x_num = (instr & 0x0F00) >> 8;
+            uint8_t value = (instr & 0x00FF); // no need to shift.
+            
+            srand((unsigned int)time(NULL));
+            uint8_t random_8bit = rand() & 0xFF;
+
+            chip->registers[x_num] = random_8bit & value;
+        
             break;
         case 0xD: // DXYN This is drawing the display. Need X, Y coords and needs to set other things as well. 
-
-
-            
             // If you reach the right edge of the screen, stop drawing this row
 
             // Stop if you reach the bottom edge of the screen
@@ -368,10 +380,65 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
 
             // ASSUME FOR NOW, lets debug later. 
             break;
-        case 0xE:
+
+        /*
+        These skip based on whether the player is currently pressing a key or not.
+        */
+        case 0xE: 
+            uint8_t temp = (instr & 0x000F);
+
+            switch(temp) {
+
+                case 0x01: // EXA1, skips if the key corresponding to the value in VX is not pressed.
+
+                    break;
+
+                case 0x0E: // EX9E, skip one instruction (increment PC by 2) if the key corresponding to the value in VX is pressed.
+
+
+                    break;
+            }
 
             break;
         case 0xF:
+            uint8_t tempF = (instr & 0x00FF);
+
+            switch (tempF) {
+                
+                case 0x07:
+                    
+                    break;
+
+                case 0x0A:
+                    
+                    break;
+
+                case 0x15:
+                    
+                    break;
+
+                case 0x18:
+                    
+                    break;
+
+                case 0x29:
+                    
+                    break;
+
+                case 0x33:
+                    
+                    break;
+
+                case 0x55:
+                    
+                    break;
+
+                case 0x65:
+                    
+                    break;
+            
+           
+            }
 
             break;
     }   
