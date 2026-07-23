@@ -7,7 +7,7 @@
 typedef struct {
     uint8_t ram[4096]; // Stores 4096 bytes
     uint8_t registers[16]; // store 16 registers from v0-vf
-    uint8_t display[64*32]; // 1d array for simplciity, tis a display buffer. Width = 4, height = 3. 
+    uint8_t display[64*32]; // 1d array for simplciity, tis a display buffer. Width = 64, height =32. 
 
 
     uint16_t pc; 

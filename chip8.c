@@ -185,23 +185,29 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
  
             chip->registers[15] = 0; // set VF to zero
             
-            
+            int ytemp = ycord;
             for (int i = 0; i < N; i++) { // access each row in the N rows
                 // SO in this case, in order to access each of the 8 bits in the sprite row, i need to use bitwise operations. 
                 // Should prolly have a inner forloop son im crine
                 
-                uint16_t n_temp = chip->ram[chip->idx+i]; 
+                uint8_t n_temp = chip->ram[chip->idx+i]; 
                 
                 int xtemp = xcord;
-                int ytemp = ycord;
 
                 while (n_temp > 0) { // count from most to least significant bit 0000 0000, to be convinient shift left bc it is unsigned
                     // Shift the msb to the right
                     if (n_temp)  {
-                        
+                        // need to additionally check if the msb is set.  Additionally check if coord xy on the screen is also on. Then turn of pixel and set VF to 1
+
+                        uint8_t msb = 0x80;
+                        if (n_temp & msb) {
+                            chip->display[ytemp * 64 + xtemp] = 1; // set the value to one
+                        } else {
+                            xtemp++;
+                            continue;
+                        }
                     } else {
-                        xtemp++;
-                        continue;
+                        break; // get out of the loop
                     }
                 }
                 
