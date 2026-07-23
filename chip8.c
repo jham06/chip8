@@ -14,8 +14,7 @@ void chip8_init (Chip8 *chip) {
     // set PC to 0x200, i.e. starting point of program
     chip->pc = 0x200;
     
-    // Just hardcoding these font data. Copied from another open source code lul
-    // load font data into RAM at 0x050. Just assign to hexadecimal
+    // Hardcoding these font data. Copied from another open source code lul. Load font data into RAM at 0x050.
     const uint8_t sprites []= { 
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
         0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -96,16 +95,10 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                 case 0xE0: // Clear the display, 
                     memset(chip->display, 0, sizeof(chip->display));
                     break;
-                case 0xEE: // pop last address from the stack and set PC to it
-                    
-                     // cant just pop in C, so I need to shift it
-                    int stack_size = sizeof(chip->stack) / sizeof(chip->stack[0]);
-
-                    uint16_t popped_temp = chip->stack[stack_size];
-                
-                    for (int i = 0; i < stack_size; i++) {
-                        chip->stack[i] = chip->stack[i + 1];
-                    } // shift elements to the left
+                case 0xEE: // pop last address from the stack and set PC to it. Use sp, don't overcomplicate
+        
+                    chip->sp--;
+                    uint16_t popped_temp = chip->stack[chip->sp];
 
                     chip->pc = popped_temp;
                     
@@ -119,11 +112,13 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
             break;
         case 0x2: // 2NNN, Set PC = NNN. Push current PC to stack. 
 
-            uint8_t addr = instr & 0x0FFF;
+            uint16_t addr = instr & 0x0FFF;
 
             // First push current PC to stack. 
 
-            
+            chip->stack[chip->sp] = chip->pc;
+
+            chip->sp++;
 
             chip->pc = addr;
 
@@ -171,10 +166,10 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
             chip->registers[add_reg] += add_temp; // okay mb, i thought VF would be affected
             
             break;
-        case 0x8: // 8XY0, VX is set to the value of VY
+        case 0x8: // 8XYN
             uint8_t temp = instr & 0x000F;
             switch (temp) {
-                case 0x00: // VX is set to the value of VY.
+                case 0x00: // 8XY0 VX is set to the value of VY.
                     uint8_t x_num = (instr >> 8) & 0x000F;
                     uint8_t y_num = (instr >> 4) & 0x000F;
 
@@ -182,14 +177,14 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
 
                     break;
 
-                case 0x01: // VX = VX OR VY
+                case 0x01: // 8XY1 VX = VX OR VY
                     uint8_t x_num = (instr >> 8) & 0x000F;
                     uint8_t y_num = (instr >> 4) & 0x000F;
 
                     chip->registers[x_num] = chip->registers[y_num] | chip->registers[x_num];
                     break;
 
-                case 0x02: // VX = VX AND VY
+                case 0x02: // 8XY2 VX = VX AND VY
                     uint8_t x_num = (instr >> 8) & 0x000F;
                     uint8_t y_num = (instr >> 4) & 0x000F;
 
@@ -197,7 +192,7 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
             
                     break;
 
-                case 0x03: // VX = VX XOR VY
+                case 0x03: // 8XY3 VX = VX XOR VY
                     uint8_t x_num = (instr >> 8) & 0x000F;
                     uint8_t y_num = (instr >> 4) & 0x000F;
 
@@ -205,7 +200,7 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
             
                     break;
 
-                case 0x04:
+                case 0x04: // 8XY4 VX = VX + VY, set VF = 0/1 depending on overflow/not
                     uint8_t x_num = (instr >> 8) & 0x000F;
                     uint8_t y_num = (instr >> 4) & 0x000F;
 
@@ -216,25 +211,60 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                     } else { // fine
                         chip->registers[15] = 0;
                     }
-                    chip->registers[x_num] = chip->registers[x_num] + chip->registers[y_num];
+                    chip->registers[x_num] = chip->registers[x_num] + chip->registers[y_num]; // if overflow, does this happen either way?
             
                     break;
                 
-                case 0x05:
+                case 0x05: // 8XY5 VX = VX - VY
                         
+                    uint8_t x_num = (instr >> 8) & 0x000F;
+                    uint8_t y_num = (instr >> 4) & 0x000F;
 
+                    chip->registers[x_num] = chip->registers[x_num] - chip->registers[y_num];
 
                     break;
 
-                case 0x06:
-            
+                case 0x06: // 8XY6 Set VX to the value of VY, Shift the value of VX one bit to the right (8XY6), Set VF to 1 if lsb that was shifted out was 1, or 0 if it was 0
+                    
+                    uint8_t x_num = (instr >> 8) & 0x000F;
+                    uint8_t result = 0x01 & chip->registers[x_num];
+
+                    chip->registers[x_num] = chip->registers[x_num] >> 1;
+
+                    if (result) {
+                        chip->registers[15] = 1;
+                    } else {
+                        chip->registers[15] = 0;
+                    }
+                    
+                    
                     break;
                 
-                case 0x07:
+                case 0x07: // 8XY7 VX = VX - VY
+                    
+                    uint8_t x_num = (instr >> 8) & 0x000F;
+                    uint8_t y_num = (instr >> 4) & 0x000F;
+
+                    chip->registers[x_num] = chip->registers[y_num] - chip->registers[x_num];   
             
                     break;
 
-                
+                case 0x0E: // 8XYE  Set VX to the value of VY, Shift the value of VX one bit to the left (8XYE), Set VF to 1 if msb that was shifted out was 1, or 0 if it was 0
+                    
+                    uint8_t x_num = (instr >> 8) & 0x000F;
+                    uint8_t result = 0x80 & chip->registers[x_num];
+
+                    chip->registers[x_num] = chip->registers[x_num] << 1;
+
+                    if (result) { // Even in this case, if there is successful AND, the value is >1, otherwise null. 
+                        chip->registers[15] = 1;
+                    } else {
+                        chip->registers[15] = 0;
+                    }
+                    
+                    
+                    break;
+
             }
 
             uint8_t x_num = (instr >> 8) & 0x000F;
