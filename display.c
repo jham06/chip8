@@ -73,14 +73,123 @@ int display_handle_input (Chip8 *chip) {
     // Handle the events. 
 
     while(SDL_PollEvent(&event) != 0) {
+        // NESTED SWITCH
 
-        if (event.type == SDL_QUIT) {
-            return 1; 
-        } if (event.type == SDL_KEYDOWN) {
-            int key?;
-            chip->keypad[key] == 1;
-        } if (event.type == SDL_KEYUP) {
-            chip->keypad[key] == 0;
+        switch (event.type) {
+
+            case SDL_QUIT:
+                return 1;
+                break;
+            
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym) {
+                
+                    case SDLK_1: 
+                        chip->keypad[1] = 1;
+                        break;
+                    case SDLK_2:
+                        chip->keypad[2] = 1; 
+                        break;
+                    case SDLK_3: 
+                        chip->keypad[3] = 1;
+                        break;
+                    case SDLK_4: 
+                        chip->keypad[0x0C] = 1;
+                        break;
+                    case SDLK_q: 
+                        chip->keypad[4] = 1;
+                        break;
+                    case SDLK_w: 
+                        chip->keypad[5] = 1;
+                        break;
+                    case SDLK_e:
+                        chip->keypad[6] = 1;
+                        break;
+                    case SDLK_r: 
+                        chip->keypad[0x0D] = 1;
+                        break;
+                    case SDLK_a:
+                        chip->keypad[7] = 1;
+                        break;
+                    case SDLK_s:
+                        chip->keypad[8] = 1;
+                        break; 
+                    case SDLK_d: 
+                        chip->keypad[9] = 1;
+                        break;
+                    case SDLK_f: 
+                        chip->keypad[0x0E] = 1;
+                        break;
+                    case SDLK_z: 
+                        chip->keypad[0x0A] = 1;
+                        break;
+                    case SDLK_x: 
+                        chip->keypad[0] = 1;
+                        break;
+                    case SDLK_c: 
+                        chip->keypad[0x0B] = 1;
+                        break;
+                    
+                    case SDLK_v: 
+                        chip->keypad[0x0F] = 1;
+                        break;
+                }
+                break;
+            case SDL_KEYUP:
+                switch (event.key.keysym.sym) {
+                
+                    case SDLK_1: 
+                        chip->keypad[1] = 0;
+                        break;
+                    case SDLK_2:
+                        chip->keypad[2] = 0; 
+                        break;
+                    case SDLK_3: 
+                        chip->keypad[3] = 0;
+                        break;
+                    case SDLK_4: 
+                        chip->keypad[0x0C] = 0;
+                        break;
+                    case SDLK_q: 
+                        chip->keypad[4] = 0;
+                        break;
+                    case SDLK_w: 
+                        chip->keypad[5] = 0;
+                        break;
+                    case SDLK_e:
+                        chip->keypad[6] = 0;
+                        break;
+                    case SDLK_r: 
+                        chip->keypad[0x0D] = 0;
+                        break;
+                    case SDLK_a:
+                        chip->keypad[7] = 0;
+                        break;
+                    case SDLK_s:
+                        chip->keypad[8] = 0;
+                        break; 
+                    case SDLK_d: 
+                        chip->keypad[9] = 0;
+                        break;
+                    case SDLK_f: 
+                        chip->keypad[0x0E] = 0;
+                        break;
+                    case SDLK_z: 
+                        chip->keypad[0x0A] = 0;
+                        break;
+                    case SDLK_x: 
+                        chip->keypad[0] = 0;
+                        break;
+                    case SDLK_c: 
+                        chip->keypad[0x0B] = 0;
+                        break;
+                    
+                    case SDLK_v: 
+                        chip->keypad[0x0F] = 0;
+                        break;
+                }
+
+                break;
         }
     }
 
