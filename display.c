@@ -82,7 +82,6 @@ int display_handle_input (Chip8 *chip) {
                 break;
             
             case SDL_KEYDOWN:
-                printf("Key down: %d mapped to keypad\n", event.key.keysym.sym);
                 switch (event.key.keysym.sym) {
                 
                     case SDLK_1: 

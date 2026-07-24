@@ -223,6 +223,12 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                     uint8_t x_num85 = (instr >> 8) & 0x000F;
                     uint8_t y_num85 = (instr >> 4) & 0x000F;
 
+                    if (chip->registers[x_num85] >= chip->registers[y_num85]) {
+                        chip->registers[15] = 1;
+                    } else {
+                        chip->registers[15] = 0;
+                    } // forgot to account for the VF register, as if the first operand  >= second operand, set vf to one. HOw could i forgt this?
+
                     chip->registers[x_num85] = chip->registers[x_num85] - chip->registers[y_num85];
 
                     break;
@@ -247,6 +253,12 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                     
                     uint8_t x_num87 = (instr >> 8) & 0x000F;
                     uint8_t y_num87 = (instr >> 4) & 0x000F;
+
+                    if (chip->registers[x_num87] >= chip->registers[y_num87]) {
+                        chip->registers[15] = 1;
+                    } else {
+                        chip->registers[15] = 0;
+                    } 
 
                     chip->registers[x_num87] = chip->registers[y_num87] - chip->registers[x_num87];   
             
@@ -381,7 +393,7 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
             switch(temp) {
 
                 case 0x01: // EXA1, skips if the key corresponding to the value in VX is not pressed i.e. chip->keypad[key] = 1
-                    printf("Checking key: %d value: %d\n", value, chip->keypad[value]);
+                   
                     uint8_t reg_num1 = (instr & 0x0F00) >> 8;
 
                     uint8_t value1 = chip->registers[reg_num1];
@@ -398,7 +410,7 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                     uint8_t reg_num = (instr & 0x0F00) >> 8;
 
                     uint8_t value = chip->registers[reg_num];
-                    printf("Pong checking keypad[%d]\n", value);
+                   
                     if (chip->keypad[value] == 1) {
                         chip->pc += 2;
                     }
