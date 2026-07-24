@@ -389,7 +389,7 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
 
             switch(temp) {
 
-                case 0x01: // EXA1, skips if the key corresponding to the value in VX is not pressed.
+                case 0x01: // EXA1, skips if the key corresponding to the value in VX is not pressed i.e. chip->keypad[key] = 1
 
                     break;
 
