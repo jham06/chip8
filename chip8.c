@@ -77,7 +77,7 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
     uint16_t temp1 = chip->ram[chip->pc];
     uint16_t temp2 = chip->ram[chip->pc + 1];
 
-    // C is a little endian. However, due to nautre of chip8, first byte read from memory is most sig byte. Store temp1 byte at uper 
+    // Significant bits go first, so its a big endian.  However, due to nautre of chip8, first byte read from memory is most sig byte. 
 
     temp1 = temp1 << 8; 
 
