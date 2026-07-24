@@ -1,8 +1,6 @@
 #include "chip8.h"
 #include "display.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <SDL2/SDL.h>
@@ -11,7 +9,7 @@ const int scale = 10;
 const int SCREEN_WIDTH = 64 * scale;
 const int SCREEN_HEIGHT = 32 * scale;
 
-int display_init (Chip8 *chip) {
+int display_init (void) {
 
 };
 
@@ -23,7 +21,7 @@ int display_handle_input (Chip8 *chip) {
 
 };  
 
-void display_clean (Chip8 *chip) {
+void display_clean (void) {
 
 };
 

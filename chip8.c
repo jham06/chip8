@@ -447,8 +447,3 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
             break;
     }   
 }
-
-int main () {
-
-   
-}
