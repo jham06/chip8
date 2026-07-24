@@ -370,7 +370,7 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
 
 
             // ASSUME FOR NOW, lets debug later. 
-            //break;
+            break;
 
         /*
         These skip based on whether the player is currently pressing a key or not.
@@ -381,7 +381,7 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
             switch(temp) {
 
                 case 0x01: // EXA1, skips if the key corresponding to the value in VX is not pressed i.e. chip->keypad[key] = 1
-
+                    printf("Checking key: %d value: %d\n", value, chip->keypad[value]);
                     uint8_t reg_num1 = (instr & 0x0F00) >> 8;
 
                     uint8_t value1 = chip->registers[reg_num1];
@@ -394,11 +394,11 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                     break;
 
                 case 0x0E: // EX9E, skip one instruction (increment PC by 2) if the key corresponding to the value in VX is pressed.
-
+                   
                     uint8_t reg_num = (instr & 0x0F00) >> 8;
 
                     uint8_t value = chip->registers[reg_num];
-
+                    printf("Pong checking keypad[%d]\n", value);
                     if (chip->keypad[value] == 1) {
                         chip->pc += 2;
                     }
