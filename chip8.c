@@ -36,6 +36,8 @@ void chip8_init (Chip8 *chip) {
     };
 
     memcpy(chip->ram + 0x050, sprites, sizeof(sprites)); // wanna be like cool kids, store at 0x050
+
+   
 }
 
 void chip8_load (Chip8 *chip, const char *filename) { // Open the ROM file and load it into Ram starting at 0x200
@@ -364,8 +366,8 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                 ytemp++; //Increment Y (VY is not incremented)
                 if (ytemp >= 32) break; // stop drawing.
             }
-                
-            
+
+
 
             // ASSUME FOR NOW, lets debug later. 
             //break;
@@ -486,15 +488,19 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
 
                 case 0x55: // FX55, this is store memory
 
-                    for (int i = 0; i < 16; i++) {
+                    uint8_t reg_num55 = (instr & 0x0F00) >> 8;
+
+                    for (int i = 0; i <= reg_num55; i++) {
                         chip->ram[chip->idx + i] = chip->registers[i];
                     }
                     
                     break;
 
-                case 0x65: // FX65, this is load memory
+                case 0x65: // FX65, this is load memory, simple mistake it should be from V0 TO VX
+
+                    uint8_t reg_num65 = (instr & 0x0F00) >> 8;
                     
-                    for (int i = 0; i < 16; i++) {
+                    for (int i = 0; i <= reg_num65; i++) {
                         chip->registers[i] = chip->ram[chip->idx + i];
                     }
                     

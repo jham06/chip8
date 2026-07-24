@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <SDL2/SDL.h>
 
-const int scale = 10;
+const int scale = 15;
 const int SCREEN_WIDTH = 64 * scale;
 const int SCREEN_HEIGHT = 32 * scale;
 
