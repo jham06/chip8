@@ -19,7 +19,7 @@ int display_init (void) {
         printf("SDL could not be initialized. SDL_ERROR: %s\n", SDL_GetError()); // the GetError lets me know if any errors happened inside of any SDL function.
         return 1;
     }
-    window = SDL_CreateWindow("Creating a Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("CHIP8", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         
     if (window == NULL) {
         printf("Window could not be created, SDL ERROR: %s\n", SDL_GetError());

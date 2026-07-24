@@ -333,9 +333,9 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                 
                 int xtemp = xcord;
 
-                while (n_temp > 0) { // count from most to least significant bit 0000 0000, to be convinient shift left bc it is unsigned
+                for (int j = 0; j < 8; j++) { // count from most to least significant bit 0000 0000, to be convinient shift left bc it is unsigned
                     // Shift the msb to the right
-                    if (n_temp)  {
+                    //if (n_temp)  {
                         // need to additionally check if the msb is set.  Additionally check if coord xy on the screen is also on. Then turn of pixel and set VF to 1
 
                         uint8_t msb = 0x80;
@@ -346,34 +346,29 @@ void chip8_cycle (Chip8 *chip) {  // fetch/decode/execute code
                                 // use the 1d formula to access 2d
                                 chip->registers[15] = 1;
                                 chip->display[ytemp * 64 + xtemp] = 0; // turn off
-                                n_temp = n_temp << 1;
+                                //n_temp = n_temp << 1;
                             } else {
                                 chip->display[ytemp * 64 + xtemp] = 1; // turn on 
-                                n_temp = n_temp << 1;
+                                //n_temp = n_temp << 1;
                             }
-                        } else {
-                            n_temp = n_temp << 1;
-                            xtemp++; // Increment X (VX is not incremented)
-                            if (xtemp >= 64) {
-                                break; // Stop drawing on row. 
-                            }
-                            continue;
                         }
-                    } else {
-                        break; // if it is zero after shiftingget out of the loop
+                        n_temp = n_temp << 1;
+                        xtemp++; // Increment X (VX is not incremented)
+                        if (xtemp >= 64) break; // Stop drawing on row. 
+                            
                     }
-                }
+                   
+                
                 
         
                 ytemp++; //Increment Y (VY is not incremented)
-                if (ytemp >= 32) {
-                    break; // stop drawing.
-                }
-                
+                if (ytemp >= 32) break; // stop drawing.
             }
+                
+            
 
             // ASSUME FOR NOW, lets debug later. 
-            break;
+            //break;
 
         /*
         These skip based on whether the player is currently pressing a key or not.
