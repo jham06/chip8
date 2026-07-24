@@ -22,5 +22,11 @@ typedef struct {
 
 } Chip8;
 
+void chip8_init(Chip8 *chip);
+void chip8_load(Chip8 *chip, const char *filename);
+void chip8_cycle(Chip8 *chip);
+
+// declare so main has access to it. 
+
 #endif 
 
