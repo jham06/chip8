@@ -23,8 +23,15 @@ Combining my knowledge of low level concepts that I learnt in my practical progr
 - Run `make` to compile and to run the Makefile using default settings
 - Run `./chip8 roms/<GAME>` to run any desired game. Feel free to download other games as well!
 
+## Future Improvements 
+- Make own chip-8 game
+- Make Add SUPER-CHIP support
+- Adding Color
+- Emulator to run faster
+
 ## Sources
 - [Chip-8 Wikipedia](https://en.wikipedia.org/wiki/CHIP-8#Further_reading)
 - [Chip-8 High Level Guide](https://tobiasvl.github.io/blog/write-a-chip-8-emulator/#display)
+- [More Chip-8 Games](github.com/kripod/chip8-roms)
 
   
