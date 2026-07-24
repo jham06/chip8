@@ -9,16 +9,82 @@ const int scale = 10;
 const int SCREEN_WIDTH = 64 * scale;
 const int SCREEN_HEIGHT = 32 * scale;
 
+static SDL_Window *window = NULL; // This means file-scoped
+static SDL_Renderer *renderer = NULL;
+
 int display_init (void) {
+
+
+    if (SDL_Init(SDL_INIT_VIDEO) < 0 ) { 
+        printf("SDL could not be initialized. SDL_ERROR: %s\n", SDL_GetError()); // the GetError lets me know if any errors happened inside of any SDL function.
+        return 1;
+    }
+    window = SDL_CreateWindow("Creating a Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        
+    if (window == NULL) {
+        printf("Window could not be created, SDL ERROR: %s\n", SDL_GetError());
+        return 1;
+    }  
+    
+
+    renderer = SDL_CreateRenderer(window, -1, 0);
+  
+    if (renderer == NULL) {
+        printf("Renderer could not be created, SDL ERROR: %s\n", SDL_GetError());
+        return 1;
+    }
+    
+    return 0; // This is success.
 
 };
 
 void display_render (Chip8 *chip) {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // set to black first
 
+        SDL_RenderClear(renderer); // This should clear the screen
+
+       
+        SDL_Rect rect;
+        rect.w = scale;
+        rect.h = scale; // initialize members of struct. 
+
+
+        int len = sizeof(chip->display) / sizeof(chip->display[0]);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // now white for drawing. 
+
+        for (int i = 0; i < len; i++) {
+            int x = i % 64;
+            int y = i / 64; // apply modulo based on dim
+            if (chip->display[i] == 1) {
+                rect.x = x * scale;
+                rect.y = y * scale;
+                SDL_RenderFillRect(renderer, &rect);
+            } else if (chip->display[i] == 0) {
+                continue;
+            }
+        }
+
+        SDL_RenderPresent(renderer);
 }; 
 
 int display_handle_input (Chip8 *chip) {
+    SDL_Event event;
+    
+    // Handle the events. 
 
+    while(SDL_PollEvent(&event) != 0) {
+
+        if (event.type == SDL_QUIT) {
+            return 1; 
+        } if (event.type == SDL_KEYDOWN) {
+            int key?;
+            chip->keypad[key] == 1;
+        } if (event.type == SDL_KEYUP) {
+            chip->keypad[key] == 0;
+        }
+    }
+
+    return 0; // if no quit event. 
 };  
 
 void display_clean (void) {
