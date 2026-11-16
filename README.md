@@ -15,7 +15,7 @@ Combining my knowledge of low level concepts that I learnt in my practical progr
 - Compatible with any standard Chip-8 ROM
 - Maps standard keyboard input to the Chip-8 hexadecimal keypad
 
-## Pre-requsities 
+## Pre-requisities 
 - GCC (MINGW)
 - SDL2 (specifically at C:\SDL2\)
 
